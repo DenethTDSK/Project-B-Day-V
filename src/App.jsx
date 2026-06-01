@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+import StitchPixel from "./components/StitchPixel";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -31,7 +32,7 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden relative flex items-center justify-center bg-gradient-to-br from-[#d7f5e7] via-[#ffe4ef] to-[#fff3c4] p-4">
-      {/* Soft background glow */}
+      {/* background*/}
       <motion.div
         className="absolute w-[400px] h-[400px] rounded-full bg-pink-300 blur-3xl opacity-30 top-[-120px] left-[-120px]"
         animate={{ scale: [1, 1.2, 1] }}
@@ -107,7 +108,7 @@ function App() {
         ))}
       </svg>
 
-      {/* Sakura falling petals */}
+      {/* falling petals */}
       {Array.from({ length: 34 }).map((_, index) => (
         <motion.div
           key={index}
@@ -140,7 +141,30 @@ function App() {
       ))}
 
       {/* Main card wrapper */}
-      <div className="relative z-10 w-full max-w-[560px] h-[690px] flex items-center justify-center">
+      <div className="relative z-10 w-full max-w-[720px] h-[690px] flex items-center justify-center">
+        {/* Stitch pixel character */}
+        <motion.div
+          className="absolute z-30 left-[-30px] bottom-[120px] origin-bottom-left"
+          animate={{
+            opacity: open ? 0 : 1,
+            x: open ? -90 : 0,
+          }}
+          transition={{
+            duration: 0.5,
+            ease: "easeInOut",
+          }}
+          style={{
+            pointerEvents: open ? "none" : "auto",
+          }}
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <StitchPixel />
+          </motion.div>
+        </motion.div>
+
         {/* Floral vine frame around card */}
         <motion.svg
           viewBox="0 0 500 650"
@@ -230,17 +254,13 @@ function App() {
             </motion.div>
 
             <h1 className="text-4xl sm:text-5xl font-bold text-pink-600 mb-5">
-              Happy Birthday!
+              Happy Birthday Vinuki !!!
             </h1>
 
             <p className="text-gray-700 text-lg sm:text-xl leading-relaxed">
-              Wishing you happiness, laughter, beautiful memories,
-              endless smiles, and the most magical year ahead.
+              Wishing you a great and an amzaing day and an amazing year ahead and great awesome success in everything you do !!!!
             </p>
 
-            <p className="mt-7 text-purple-600 font-semibold text-xl">
-              You are truly special 💖
-            </p>
           </div>
 
           {/* Front cover */}
@@ -267,20 +287,17 @@ function App() {
                 animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.08, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                💐
+                🥳
               </motion.div>
 
-              <h2 className="text-4xl sm:text-5xl font-bold">
-                Birthday Wishes
+              <h2
+                className="text-4xl sm:text-5xl text-white"
+                style={{
+                  fontFamily: "'Dancing Script', cursive",
+                }}
+              >
+                Happyyy Birthdayyy
               </h2>
-
-              <p className="mt-5 text-xl sm:text-2xl">
-                Made with love ✨
-              </p>
-
-              <p className="absolute bottom-8 text-sm opacity-90">
-                Tap below to open
-              </p>
             </motion.div>
           </motion.div>
         </div>
