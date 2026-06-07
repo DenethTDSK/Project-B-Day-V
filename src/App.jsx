@@ -6,15 +6,21 @@ import StitchPixel from "./components/StitchPixel";
 function App() {
   const [open, setOpen] = useState(false);
 
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+
+  const petalCount = isMobile ? 14 : 34;
+
   function handleOpen() {
     const nextState = !open;
     setOpen(nextState);
 
     if (nextState) {
       confetti({
-        particleCount: 200,
-        spread: 110,
+        particleCount: isMobile ? 60 : 200,
+        spread: isMobile ? 70 : 110,
+        ticks: isMobile ? 120 : 200,
         origin: { y: 0.6 },
+        disableForReducedMotion: true,
       });
     }
   }
@@ -32,18 +38,22 @@ function App() {
 
   return (
     <div className="min-h-screen overflow-hidden relative flex items-center justify-center bg-gradient-to-br from-[#d7f5e7] via-[#ffe4ef] to-[#fff3c4] p-4">
-      {/* background*/}
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full bg-pink-300 blur-3xl opacity-30 top-[-120px] left-[-120px]"
-        animate={{ scale: [1, 1.2, 1] }}
-        transition={{ duration: 7, repeat: Infinity }}
-      />
+      {/* background */}
+      {!isMobile && (
+        <>
+          <motion.div
+            className="absolute w-[400px] h-[400px] rounded-full bg-pink-300 blur-3xl opacity-30 top-[-120px] left-[-120px]"
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 7, repeat: Infinity }}
+          />
 
-      <motion.div
-        className="absolute w-[420px] h-[420px] rounded-full bg-yellow-300 blur-3xl opacity-30 bottom-[-120px] right-[-120px]"
-        animate={{ scale: [1.1, 0.95, 1.1] }}
-        transition={{ duration: 8, repeat: Infinity }}
-      />
+          <motion.div
+            className="absolute w-[420px] h-[420px] rounded-full bg-yellow-300 blur-3xl opacity-30 bottom-[-120px] right-[-120px]"
+            animate={{ scale: [1.1, 0.95, 1.1] }}
+            transition={{ duration: 8, repeat: Infinity }}
+          />
+        </>
+      )}
 
       {/* Background flower vines */}
       <svg
@@ -76,9 +86,20 @@ function App() {
         />
 
         {[
-          [90, 150], [130, 300], [100, 460], [180, 620], [145, 790],
-          [900, 150], [850, 310], [910, 470], [805, 650], [850, 820],
-          [280, 900], [430, 900], [620, 885], [760, 790],
+          [90, 150],
+          [130, 300],
+          [100, 460],
+          [180, 620],
+          [145, 790],
+          [900, 150],
+          [850, 310],
+          [910, 470],
+          [805, 650],
+          [850, 820],
+          [280, 900],
+          [430, 900],
+          [620, 885],
+          [760, 790],
         ].map(([x, y], index) => (
           <g key={index}>
             <ellipse
@@ -98,41 +119,69 @@ function App() {
               transform={`rotate(35 ${x + 18} ${y})`}
             />
 
-            <circle cx={x} cy={y} r="12" fill={backgroundFlowers[index % backgroundFlowers.length]} />
-            <circle cx={x - 14} cy={y} r="11" fill={backgroundFlowers[index % backgroundFlowers.length]} />
-            <circle cx={x + 14} cy={y} r="11" fill={backgroundFlowers[index % backgroundFlowers.length]} />
-            <circle cx={x} cy={y - 14} r="11" fill={backgroundFlowers[index % backgroundFlowers.length]} />
-            <circle cx={x} cy={y + 14} r="11" fill={backgroundFlowers[index % backgroundFlowers.length]} />
+            <circle
+              cx={x}
+              cy={y}
+              r="12"
+              fill={backgroundFlowers[index % backgroundFlowers.length]}
+            />
+            <circle
+              cx={x - 14}
+              cy={y}
+              r="11"
+              fill={backgroundFlowers[index % backgroundFlowers.length]}
+            />
+            <circle
+              cx={x + 14}
+              cy={y}
+              r="11"
+              fill={backgroundFlowers[index % backgroundFlowers.length]}
+            />
+            <circle
+              cx={x}
+              cy={y - 14}
+              r="11"
+              fill={backgroundFlowers[index % backgroundFlowers.length]}
+            />
+            <circle
+              cx={x}
+              cy={y + 14}
+              r="11"
+              fill={backgroundFlowers[index % backgroundFlowers.length]}
+            />
             <circle cx={x} cy={y} r="6" fill="#b45309" />
           </g>
         ))}
       </svg>
 
       {/* falling petals */}
-      {Array.from({ length: 34 }).map((_, index) => (
+      {Array.from({ length: petalCount }).map((_, index) => (
         <motion.div
           key={index}
           className="absolute text-pink-300 pointer-events-none z-[1]"
           style={{
             left: `${(index * 29) % 100}%`,
             top: "-80px",
-            fontSize: `${18 + (index % 4) * 5}px`,
+            fontSize: `${
+              isMobile ? 16 + (index % 3) * 4 : 18 + (index % 4) * 5
+            }px`,
             opacity: 0.75,
+            willChange: "transform",
           }}
           animate={{
             y: ["0vh", "120vh"],
             x: [
               0,
-              index % 2 === 0 ? 90 : -90,
-              index % 3 === 0 ? 40 : -40,
+              index % 2 === 0 ? (isMobile ? 45 : 90) : isMobile ? -45 : -90,
+              index % 3 === 0 ? (isMobile ? 25 : 40) : isMobile ? -25 : -40,
               0,
             ],
             rotate: [0, 120, 260, 360],
           }}
           transition={{
-            duration: 8 + (index % 9),
+            duration: isMobile ? 10 + (index % 6) : 8 + (index % 9),
             repeat: Infinity,
-            delay: index * 0.28,
+            delay: index * 0.35,
             ease: "linear",
           }}
         >
@@ -150,15 +199,16 @@ function App() {
             x: open ? -90 : 0,
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.45,
             ease: "easeInOut",
           }}
           style={{
             pointerEvents: open ? "none" : "auto",
+            willChange: "transform, opacity",
           }}
         >
           <motion.div
-            animate={{ y: [0, -8, 0] }}
+            animate={isMobile ? {} : { y: [0, -8, 0] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           >
             <StitchPixel />
@@ -173,10 +223,11 @@ function App() {
           initial={{ opacity: 1, scale: 1, rotate: 0 }}
           animate={{
             opacity: open ? 0 : 1,
-            scale: open ? 1.12 : 1,
-            rotate: open ? 5 : 0,
+            scale: open ? 1.08 : 1,
+            rotate: open ? 3 : 0,
           }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: isMobile ? 0.55 : 0.8 }}
+          style={{ willChange: "transform, opacity" }}
         >
           <path
             d="M95 60 C45 150, 70 250, 60 340 C50 440, 95 520, 110 600"
@@ -207,9 +258,22 @@ function App() {
           />
 
           {[
-            [80, 130], [70, 210], [75, 300], [70, 410], [95, 520],
-            [420, 130], [430, 220], [425, 310], [430, 420], [405, 530],
-            [170, 45], [260, 35], [330, 50], [170, 610], [260, 625], [330, 605],
+            [80, 130],
+            [70, 210],
+            [75, 300],
+            [70, 410],
+            [95, 520],
+            [420, 130],
+            [430, 220],
+            [425, 310],
+            [430, 420],
+            [405, 530],
+            [170, 45],
+            [260, 35],
+            [330, 50],
+            [170, 610],
+            [260, 625],
+            [330, 605],
           ].map(([x, y], i) => (
             <ellipse
               key={`leaf-${i}`}
@@ -223,16 +287,46 @@ function App() {
           ))}
 
           {[
-            [70, 160], [85, 360], [115, 540],
-            [430, 170], [415, 365], [385, 545],
-            [245, 42], [250, 613],
+            [70, 160],
+            [85, 360],
+            [115, 540],
+            [430, 170],
+            [415, 365],
+            [385, 545],
+            [245, 42],
+            [250, 613],
           ].map(([x, y], i) => (
             <g key={`flower-${i}`}>
-              <circle cx={x} cy={y} r="8" fill={backgroundFlowers[i % backgroundFlowers.length]} />
-              <circle cx={x - 10} cy={y} r="8" fill={backgroundFlowers[i % backgroundFlowers.length]} />
-              <circle cx={x + 10} cy={y} r="8" fill={backgroundFlowers[i % backgroundFlowers.length]} />
-              <circle cx={x} cy={y - 10} r="8" fill={backgroundFlowers[i % backgroundFlowers.length]} />
-              <circle cx={x} cy={y + 10} r="8" fill={backgroundFlowers[i % backgroundFlowers.length]} />
+              <circle
+                cx={x}
+                cy={y}
+                r="8"
+                fill={backgroundFlowers[i % backgroundFlowers.length]}
+              />
+              <circle
+                cx={x - 10}
+                cy={y}
+                r="8"
+                fill={backgroundFlowers[i % backgroundFlowers.length]}
+              />
+              <circle
+                cx={x + 10}
+                cy={y}
+                r="8"
+                fill={backgroundFlowers[i % backgroundFlowers.length]}
+              />
+              <circle
+                cx={x}
+                cy={y - 10}
+                r="8"
+                fill={backgroundFlowers[i % backgroundFlowers.length]}
+              />
+              <circle
+                cx={x}
+                cy={y + 10}
+                r="8"
+                fill={backgroundFlowers[i % backgroundFlowers.length]}
+              />
               <circle cx={x} cy={y} r="5" fill="#d88461" />
             </g>
           ))}
@@ -247,7 +341,7 @@ function App() {
           <div className="absolute inset-0 bg-white/95 rounded-[35px] shadow-2xl border-[5px] border-pink-300 flex flex-col items-center justify-center text-center p-8 z-10">
             <motion.div
               className="text-7xl mb-5"
-              animate={{ scale: [1, 1.1, 1] }}
+              animate={isMobile ? {} : { scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               🎂
@@ -258,19 +352,20 @@ function App() {
             </h1>
 
             <p className="text-gray-700 text-lg sm:text-xl leading-relaxed">
-              Wishing you a great and an amzaing day and an amazing year ahead and great awesome success in everything you do !!!!
+              Wishing you a great and an amzaing day and an amazing year ahead
+              and great awesome success in everything you do !!!!
             </p>
-
           </div>
 
           {/* Front cover */}
           <motion.div
             animate={{ rotateY: open ? -165 : 0 }}
-            transition={{ duration: 1.2 }}
+            transition={{ duration: isMobile ? 0.85 : 1.2 }}
             style={{
               transformOrigin: "left",
               transformStyle: "preserve-3d",
               backfaceVisibility: "hidden",
+              willChange: "transform",
             }}
             className="absolute inset-0 rounded-[35px] shadow-2xl border-[5px] border-white bg-gradient-to-br from-pink-500 via-rose-400 to-yellow-300 flex flex-col items-center justify-center text-white text-center p-8 z-20"
           >
@@ -284,7 +379,11 @@ function App() {
             >
               <motion.div
                 className="text-8xl mb-6"
-                animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.08, 1] }}
+                animate={
+                  isMobile
+                    ? {}
+                    : { rotate: [0, 10, -10, 0], scale: [1, 1.08, 1] }
+                }
                 transition={{ duration: 2, repeat: Infinity }}
               >
                 🥳
